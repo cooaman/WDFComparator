@@ -4,12 +4,11 @@ on:
   workflow_dispatch:
   push:
     branches: [ main ]
+    tags: [ 'v*' ]
     paths:
       - "wdf_comparator.py"
       - "requirements.txt"
-      - ".github/workflows/build.yml"
-  tags:
-    - "v*"
+      - ".github/workflows/wdf.yml"
 
 jobs:
   build-windows:
@@ -27,7 +26,7 @@ jobs:
       - name: Cache pip
         uses: actions/cache@v4
         with:
-          path: ~/.cache/pip
+          path: ~\AppData\Local\pip\Cache
           key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
           restore-keys: |
             ${{ runner.os }}-pip-
@@ -39,9 +38,7 @@ jobs:
           pip install pyinstaller
 
       - name: Build EXE with PyInstaller
-        run: |
-          pyinstaller --onefile --windowed --name WDFComparator wdf_comparator.py
-        shell: bash
+        run: pyinstaller --onefile --windowed --name WDFComparator wdf_comparator.py
 
       - name: Upload artifact (EXE)
         uses: actions/upload-artifact@v4
